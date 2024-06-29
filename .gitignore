@@ -13,3 +13,4 @@ dist
 example/public/*.js*
 example/public/*.ts*
 coverage/*
+.idea/*

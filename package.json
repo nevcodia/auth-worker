@@ -7,8 +7,8 @@
 	"scripts": {
 		"build": "tsup --minify && node ./prepare.js",
 		"lint": "eslint .",
-		"dev": "nodemon -i example -i dist -i node_modules -i test -i 'src/**.test.ts' -e ts,tsx --exec \"npm run build:example\"",
-		"build:example": "npm run build && cd example && rm -rf node_modules/auth-worker && npm install && npm run build:sw -- --clean=false",
+		"dev": "nodemon -i example -i dist -i node_modules -i test -i 'src/**.test.ts' -e ts,tsx --exec \"yarn build:example\"",
+		"build:example": "yarn run build && cd example && rimraf node_modules/auth-worker && yarn install && yarn build:sw -- --clean=false",
 		"test": "jest"
 	},
 	"repository": {
@@ -33,6 +33,7 @@
 		"lint-staged": "^13.2.3",
 		"nodemon": "^3.0.1",
 		"prettier": "^3.0.0",
+		"rimraf": "^5.0.7",
 		"ts-jest": "^29.1.1",
 		"tsup": "^7.1.0",
 		"typescript": "^5.1.6"

@@ -18,6 +18,8 @@ async function intercept(method: HttpMethod, urlString: string): Promise<URL | v
 		const [_empty, action, provider, _rest] = url.pathname.replace(state.config.basePath, '').split('/');
 
 		if (action === 'login') {
+			console.log("login")
+			console.log(state)
 			const loginUrl = await getLoginUrl(state.config, provider, url.origin);
 
 			return new URL(loginUrl);

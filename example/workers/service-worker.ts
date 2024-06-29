@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-import { initAuthServiceWorker } from 'auth-worker/worker';
-import { google, facebook, twitter, reddit, auth0 } from 'auth-worker/providers';
+import {initAuthServiceWorker} from 'auth-worker/worker';
+import {facebook, google, hydra, reddit, twitter} from 'auth-worker/providers';
+import {BASE_PATH} from "../constants";
 
 addEventListener('install', () => {
-	// @ts-ignore
-	skipWaiting();
+  // @ts-ignore
+  skipWaiting();
 });
 
 addEventListener('activate', (event) => {
-	// @ts-ignore
-	event.waitUntil(clients.claim());
+  // @ts-ignore
+  event.waitUntil(clients.claim());
 });
 
 initAuthServiceWorker(
-	{ google, facebook, twitter, reddit, auth0: auth0('dev-u8csbbr8zashh2k8.us.auth0.com') },
-	'/auth',
-	['https://www.googleapis.com/oauth2/v3/userinfo']
-	// 'foobartest'
+    {google, facebook, twitter, reddit, havelsan: hydra("infra.net/auth")},
+    BASE_PATH + '/auth',
+    [`http`]
+    // 'foobartest'
 );
