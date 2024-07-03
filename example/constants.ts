@@ -1,1 +1,1 @@
-export const BASE_PATH = "/worker"
+export const BASE_PATH = "/wauth"

@@ -5,6 +5,7 @@ import {fetchListener} from './interceptor';
 import {messageListenerWithOrigin} from './postMesage';
 import {getAuthState, saveAuthState} from './state';
 import {getConfig, log} from './utils';
+import {checkTokenExpiration, tokenSyncListener} from "./tokensync";
 
 export async function initAuthServiceWorker(
     providers: Record<string, IProvider>,
@@ -48,6 +49,7 @@ export async function initAuthServiceWorker(
 
   scope.addEventListener('fetch', fetchListener);
   scope.addEventListener('message', messageListenerWithOrigin);
+  scope.addEventListener('sync', tokenSyncListener);
 
   return () => {
     scope.removeEventListener('fetch', fetchListener);

@@ -29,7 +29,7 @@ async function intercept(method: HttpMethod, urlString: string): Promise<URL | v
       await deleteSession();
 
       // TODO: Add configurable logout URL
-      return new URL("/worker", url.origin);
+      return new URL(state.config.basePath, url.origin);
     } else if (action === 'callback') {
       const hash = url.hash.substring(1);
       const query = url.search.substring(1);
@@ -61,7 +61,6 @@ export async function fetchListener(event: FetchEvent) {
 
             return fetchWithCredentials(event.request);
           }
-
           return generateResponse({error: AuthError.Unauthorized}, 401);
         })
     );
@@ -73,7 +72,6 @@ export async function fetchListener(event: FetchEvent) {
 
             return Response.redirect(response, 302);
           }
-
           return fetch(event.request);
         })
     );

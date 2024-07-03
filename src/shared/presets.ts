@@ -85,7 +85,9 @@ export const hydra: (domain: string) => IProvider = (domain) => ({
   tokenUrl: "https://infra.net/auth/oauth2/token",
   grantType: GrantFlow.PKCE,
   accessTokenName: 'access_token',
+  refreshTokenName: 'refresh_token',
   userInfoUrl: "https://infra.net/auth/userinfo",
+  expiresInName: "expires_in",
   userInfoParser(data: Record<string, unknown>) {
     return {
       id: data.sub,

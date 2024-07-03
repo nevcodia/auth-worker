@@ -16,7 +16,6 @@ addEventListener('activate', (event) => {
 
 initAuthServiceWorker(
     {google, facebook, twitter, reddit, havelsan: hydra("infra.net/auth")},
-    BASE_PATH + '/auth',
+    BASE_PATH,
     [`http`]
-    // 'foobartest'
 );

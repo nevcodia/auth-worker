@@ -3,4 +3,5 @@ export interface IWorkerSettings {
 	scope?: string;
 	debug?: boolean;
 	patchUnregister?: boolean;
+	tokenSync?: boolean;
 }
