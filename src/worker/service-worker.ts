@@ -5,7 +5,7 @@ import {fetchListener} from './interceptor';
 import {messageListenerWithOrigin} from './postMesage';
 import {getAuthState, saveAuthState} from './state';
 import {getConfig, log} from './utils';
-import {checkTokenExpiration, tokenSyncListener} from "./tokensync";
+import {syncListener, updateOnlineStatus} from "./sync";
 
 export async function initAuthServiceWorker(
     providers: Record<string, IProvider>,
@@ -48,11 +48,16 @@ export async function initAuthServiceWorker(
   });
 
   scope.addEventListener('fetch', fetchListener);
+  scope.addEventListener('sync', syncListener);
   scope.addEventListener('message', messageListenerWithOrigin);
-  scope.addEventListener('sync', tokenSyncListener);
+  scope.addEventListener('online', updateOnlineStatus);
+  scope.addEventListener('offline', updateOnlineStatus);
 
   return () => {
     scope.removeEventListener('fetch', fetchListener);
     scope.removeEventListener('message', messageListenerWithOrigin);
+    scope.removeEventListener('sync', syncListener);
+    scope.removeEventListener('online', updateOnlineStatus);
+    scope.removeEventListener('offline', updateOnlineStatus);
   };
 }

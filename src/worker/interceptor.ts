@@ -7,7 +7,8 @@ import {fetchWithCredentials, isAllowedUrl} from './fetch';
 import {createSession, deleteSession} from './operations';
 import {getAuthState} from './state';
 import {generateResponse, log} from './utils';
-import {REDIRECT_KEY, getData, saveData} from '../shared/db';
+import {REDIRECT_KEY, saveData, getData} from '../shared/db';
+import {sendMessageToClient} from "./sync";
 
 async function intercept(method: HttpMethod, urlString: string): Promise<URL | void> {
   const url = new URL(urlString);
@@ -25,12 +26,21 @@ async function intercept(method: HttpMethod, urlString: string): Promise<URL | v
 
       return new URL(loginUrl);
     } else if (action === 'logout') {
+      const loginUrl = await getLoginUrl(state.config, provider, url.origin);
+      await sendMessageToClient({type: 'LOGIN_REQUIRED', data: "havelsan"}); //TODO "havelsan" will not be static. CHANGE IT!
       await saveData(REDIRECT_KEY, "");
       await deleteSession();
 
       // TODO: Add configurable logout URL
-      return new URL(state.config.basePath, url.origin);
+      //return new URL(state.config.basePath, url.origin);
+      return new URL(loginUrl);
     } else if (action === 'callback') {
+      const searchParams = url.searchParams;
+      if (searchParams.has("error")) {
+        const loginUrl = await getLoginUrl(state.config, provider, url.origin);
+        return new URL(loginUrl);
+      }
+
       const hash = url.hash.substring(1);
       const query = url.search.substring(1);
       const params = hash && hash.length > 10 ? hash : query;
@@ -38,6 +48,7 @@ async function intercept(method: HttpMethod, urlString: string): Promise<URL | v
       const pkce = await getPkceVerifier(provider);
 
       await createSession(params, provider, localState, url.origin, pkce);
+      await sendMessageToClient({type: 'LOGIN_SUCCESSFULLY', data: provider});
       return await getRedirectURL(url);
     } else {
       log('🛑 Invalid request', method, urlString);

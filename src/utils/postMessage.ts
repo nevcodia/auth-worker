@@ -20,10 +20,14 @@ interface IMessagePayload<TReturnType> {
 	result: TReturnType;
 }
 
-export function ping() {
+export async function ping() {
+/*	const registration = await navigator.serviceWorker.ready;
+	registration?.active?.postMessage({ type: 'ping'});*/
+
 	const workerContext = worker && 'postMessage' in worker ? worker : worker?.controller;
 
-	workerContext?.postMessage({ type: 'ping' });
+	//@ts-ignore
+	workerContext?.postMessage({ type: 'ping'});
 }
 
 export function callWorker<

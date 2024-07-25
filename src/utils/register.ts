@@ -1,15 +1,16 @@
 import {IConfig} from '../interfaces/IConfig';
 import {IWorkerSettings} from '../interfaces/IWorkerSettins';
-import {setWorker, ping} from './postMessage';
+import {ping, setWorker} from './postMessage';
 import {log} from '../worker/utils';
 
 export function loadAuthServiceWorker(
     config: IConfig,
     {
-      workerPath = './service-worker.js',
+      workerPath = './infra-worker.js',
       scope = '/',
       debug = false,
       patchUnregister = true,
+      patchUpdate = true,
       tokenSync = true
     }: IWorkerSettings = {}
 ) {
@@ -37,6 +38,16 @@ export function loadAuthServiceWorker(
     });
   }
 
+  if (patchUpdate) {
+    workerRegistration.then((registration) => {
+      if (registration) {
+        registration.update().catch((e) => {
+          console.error('Updating the service worker is failed. Details: ', e);
+        })
+      }
+    });
+  }
+
   if (tokenSync) {
     workerRegistration.then((registration) => {
       // Register for background sync
@@ -56,7 +67,19 @@ export function loadAuthServiceWorker(
   if (workerInstance) {
     setWorker(workerInstance);
 
-    setInterval(ping, 5000);
+    // setInterval(ping, 5000);
+
+    workerRegistration.then((registration) => {
+      // Register for background sync
+      //@ts-ignore
+      return registration.sync.register('ping-pong');
+    })
+    .then(() => {
+      log('🔐 ping pong', 'first ping-pong sync registered');
+    })
+    .catch((error) => {
+      console.error('🔐 ping pong', 'Check Ping Pong registration failed:', error);
+    });
   }
 
   return workerRegistration;
